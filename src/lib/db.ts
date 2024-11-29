@@ -14,8 +14,8 @@ export const client = new MongoClient(uri, {
   },
 });
 
-let animalCollection: any;
-let categoryCollection: any;
+let animalCollection: unknown;
+let categoryCollection: unknown;
 
 const connectDB = async () => {
   try {

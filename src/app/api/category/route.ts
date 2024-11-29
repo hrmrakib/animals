@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+// import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {}
+export async function GET() {}
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST() {
   try {
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }

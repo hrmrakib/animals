@@ -3,42 +3,87 @@
 import Image from "next/image";
 import { useState } from "react";
 import AddAnimalForm from "./UploadAnimal";
-import { useQuery } from "@tanstack/react-query";
-import useAxiosPublic from "@/hooks/useAxiosPublic";
+// import { useQuery } from "@tanstack/react-query";
+// import axios from "axios";
+import { Toaster } from "react-hot-toast";
 
 interface Animal {
   id: string;
-  image: string;
   name: string;
   category: string;
+  image: string;
 }
+
+const initialAnimals: Animal[] = [
+  {
+    id: "1",
+    name: "ELEPHANT",
+    category: "Land Animal",
+    image: "/assets/elephant.png",
+  },
+  {
+    id: "2",
+    name: "HORSE",
+    category: "Land Animal",
+    image: "/assets/horse.png",
+  },
+  {
+    id: "3",
+    name: "FOX",
+    category: "Land Animal",
+    image: "/assets/fox.png",
+  },
+  {
+    id: "4",
+    name: "COCKATOO",
+    category: "Bird",
+    image: "/assets/cockatoo.png",
+  },
+  {
+    id: "5",
+    name: "PHOENIX",
+    category: "Bird",
+    image: "/assets/phoenix.png",
+  },
+  {
+    id: "6",
+    name: "SPARROW",
+    category: "Bird",
+    image: "/assets/sparrow.png",
+  },
+];
 
 const categories = ["Land Animal", "Bird", "Fish", "Insect"];
 
 const Home = () => {
   const [openUploadModal, setOpenUploadModal] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>();
-  const axiosPublic = useAxiosPublic();
+  // "Land Animal"
+  const [animals] = useState<Animal[]>(initialAnimals);
 
-  const {
-    isPending,
-    error,
-    data: animals,
-  } = useQuery({
-    queryKey: ["animals"],
-    queryFn: async () => {
-      const res = await axiosPublic.get("/api/upload");
-      return res.data;
-    },
-  });
+  // const {
+  //   isPending,
+  //   error,
+  //   data: animalss,
+  //   refetch,
+  // } = useQuery({
+  //   queryKey: ["animals"],
+  //   queryFn: async () => {
+  //     const res = await axios.get("http://localhost:3000/api/upload");
+  //     return res.data;
+  //   },
+  // });
 
-  console.log(animals);
+  // if (isPending) {
+  //   return <span>loading ....</span>;
+  // }
+
+  // console.log(animals?.data);
 
   const filteredAnimals = selectedCategory
-    ? animals?.data.filter(
-        (animal: any) => animal.category === selectedCategory
-      )
+    ? animals.filter((animal) => animal.category === selectedCategory)
     : animals;
+  // console.log(filteredAnimals?.data);
 
   const toggleUpload = () => {
     setOpenUploadModal((prev) => !prev);
@@ -46,11 +91,14 @@ const Home = () => {
 
   return (
     <div className={`relative min-h-screen bg-black p-4 md:p-8`}>
+      {/* toast */}
+      <Toaster position='top-center' reverseOrder={false} />
+
       <div className={`mx-auto max-w-7xl ${openUploadModal ? "blur-sm" : ""}`}>
         {/* Category Filters and Action Buttons */}
         <div className='mb-8 flex flex-wrap items-center justify-between gap-4'>
           <div className='flex flex-wrap gap-2'>
-            {categories?.map((category) => (
+            {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
@@ -82,9 +130,9 @@ const Home = () => {
 
         {/* Animal Grid */}
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
-          {filteredAnimals?.map((animal: any) => (
+          {filteredAnimals?.map((animal) => (
             <div
-              key={animal?.id}
+              key={animal.id}
               className='group relative overflow-hidden bg-black p-4 transition-transform hover:scale-105'
             >
               <div className='flex h-full flex-col items-center justify-center'>

@@ -164,6 +164,8 @@ const AddAnimalForm = ({ openUploadModal, toggleUpload }: uploadModalProps) => {
             {imagePreview && (
               <div className='mt-2 relative h-40 rounded-lg overflow-hidden'>
                 <Image
+                  width={400}
+                  height={300}
                   src={imagePreview}
                   alt='Preview'
                   fill
