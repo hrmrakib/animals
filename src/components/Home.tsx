@@ -3,63 +3,41 @@
 import Image from "next/image";
 import { useState } from "react";
 import AddAnimalForm from "./UploadAnimal";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosPublic from "@/hooks/useAxiosPublic";
 
 interface Animal {
   id: string;
+  image: string;
   name: string;
   category: string;
-  imageUrl: string;
 }
-
-const initialAnimals: Animal[] = [
-  {
-    id: "1",
-    name: "ELEPHANT",
-    category: "Land Animal",
-    imageUrl: "/assets/elephant.png",
-  },
-  {
-    id: "2",
-    name: "HORSE",
-    category: "Land Animal",
-    imageUrl: "/assets/horse.png",
-  },
-  {
-    id: "3",
-    name: "FOX",
-    category: "Land Animal",
-    imageUrl: "/assets/fox.png",
-  },
-  {
-    id: "4",
-    name: "COCKATOO",
-    category: "Bird",
-    imageUrl: "/assets/cockatoo.png",
-  },
-  {
-    id: "5",
-    name: "PHOENIX",
-    category: "Bird",
-    imageUrl: "/assets/phoenix.png",
-  },
-  {
-    id: "6",
-    name: "SPARROW",
-    category: "Bird",
-    imageUrl: "/assets/sparrow.png",
-  },
-];
 
 const categories = ["Land Animal", "Bird", "Fish", "Insect"];
 
 const Home = () => {
   const [openUploadModal, setOpenUploadModal] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>();
-  // "Land Animal"
-  const [animals] = useState<Animal[]>(initialAnimals);
+  const axiosPublic = useAxiosPublic();
+
+  const {
+    isPending,
+    error,
+    data: animals,
+  } = useQuery({
+    queryKey: ["animals"],
+    queryFn: async () => {
+      const res = await axiosPublic.get("/api/upload");
+      return res.data;
+    },
+  });
+
+  console.log(animals);
 
   const filteredAnimals = selectedCategory
-    ? animals.filter((animal) => animal.category === selectedCategory)
+    ? animals?.data.filter(
+        (animal: any) => animal.category === selectedCategory
+      )
     : animals;
 
   const toggleUpload = () => {
@@ -72,7 +50,7 @@ const Home = () => {
         {/* Category Filters and Action Buttons */}
         <div className='mb-8 flex flex-wrap items-center justify-between gap-4'>
           <div className='flex flex-wrap gap-2'>
-            {categories.map((category) => (
+            {categories?.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
@@ -104,9 +82,9 @@ const Home = () => {
 
         {/* Animal Grid */}
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
-          {filteredAnimals.map((animal) => (
+          {filteredAnimals?.map((animal: any) => (
             <div
-              key={animal.id}
+              key={animal?.id}
               className='group relative overflow-hidden bg-black p-4 transition-transform hover:scale-105'
             >
               <div className='flex h-full flex-col items-center justify-center'>
@@ -114,7 +92,7 @@ const Home = () => {
                   <Image
                     width={120}
                     height={120}
-                    src={animal.imageUrl}
+                    src={animal.image}
                     alt={animal.name}
                     className='h-full w-full object-contain p-5'
                   />
